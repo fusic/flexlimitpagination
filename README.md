@@ -1,4 +1,5 @@
 # Flexpager plugin for CakePHP
+This Plugin will be moved to fusic/flexlimit-pagination
 
 ## Installation
 
