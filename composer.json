@@ -1,5 +1,5 @@
 {
-    "name": "your-name-here/Flexpager",
+    "name": "fusic/flexlimitpagination",
     "description": "Flexpager plugin for CakePHP",
     "type": "cakephp-plugin",
     "require": {
