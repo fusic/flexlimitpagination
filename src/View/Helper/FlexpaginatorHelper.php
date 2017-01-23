@@ -37,7 +37,7 @@ class FlexpaginatorHelper extends PaginatorHelper
      *
      * @param [type] $listCandidates ex) [5, 10, 20];
      *
-     * @return url for another limits
+     * @return string for another limits
      */
     protected function createUrl($listCandidates)
     {
