@@ -47,7 +47,7 @@ class FlexpagerComponent extends PaginatorComponent
         if (!empty($this->_listCandidates)) {
             $this->controller->set('listCandidates', $this->_listCandidates);
         }
-        return parent::paginate($object, $settings);
+        return parent::paginate($object, $this->_defaultConfig);
     }
 
     /**
