@@ -77,4 +77,21 @@ class FlexpaginatorHelper extends PaginatorHelper
         }
         $this->flexPagerTemplate = $string;
     }
+    
+    /**
+     * numbers follow the settings for limit.
+     *
+     * @param array $options
+     *
+     * @return string URL created by parent
+     */
+    public function numbers(array $options = [])
+    {
+        $currentLimit = $this->_View->get('currentLimit');
+        if (empty($options['url']['limit'])) {
+            $options['url']['limit'] = $currentLimit;
+        }
+
+        return parent::numbers($options);
+    }
 }
