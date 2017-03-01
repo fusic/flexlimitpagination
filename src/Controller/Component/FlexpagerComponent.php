@@ -90,12 +90,30 @@ class FlexpagerComponent extends PaginatorComponent
         $isFirstIterate = false;
         foreach ($query as $key => $value) {
             if (!$isFirstIterate) {
-                $url .= '?'.$key.'='.$value;
-                $isFirstIterate = true;
+                if (is_array($value)) {
+                    foreach ($value as $key => $value) {
+                        if (!$isFirstIterate) {
+                            $url .= '?'.$value.'='.$key.'.'.$value;
+                            $isFirstIterate = true;
+                        } else {
+                            $url .= '&'.$value.'='.$key.'.'.$value;
+                        }
+                    }
+                } else {
+                    $url .= '?'.$key.'='.$value;
+                    $isFirstIterate = true;
+                }
             } else {
-                $url .= '&'.$key.'='.$value;
+                if (is_array($value)) {
+                    foreach ($value as $key => $value) {
+                        $url .= '&'.$value.'='.$key.'.'.$value;
+                    }
+                } else {
+                    $url .= '&'.$key.'='.$value;
+                }
             }
         }
+
 
         return $url;
     }
