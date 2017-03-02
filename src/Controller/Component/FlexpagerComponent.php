@@ -87,6 +87,10 @@ class FlexpagerComponent extends PaginatorComponent
             unset($query['limit']);
         }
 
+        if (!empty($query['page'])) {
+            unset($query['page']);
+        }
+
         $isFirstIterate = false;
         foreach ($query as $key => $value) {
             if (!$isFirstIterate) {
