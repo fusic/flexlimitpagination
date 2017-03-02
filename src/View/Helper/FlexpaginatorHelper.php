@@ -94,4 +94,74 @@ class FlexpaginatorHelper extends PaginatorHelper
 
         return parent::numbers($options);
     }
+        /**
+     * prev follow the settings for limit.
+     *
+     * @param string $prev
+     * @param array $options
+     *
+     * @return string URL created by parent
+     */
+    public function prev($prev, array $options = [])
+    {
+        $currentLimit = $this->_View->get('currentLimit');
+        if (empty($options['url']['limit'])) {
+            $options['url']['limit'] = $currentLimit;
+        }
+
+        return parent::prev($prev);
+    }
+        /**
+     * numbers follow the settings for limit.
+     *
+     * @param string $next
+     * @param array $options
+     *
+     * @return string URL created by parent
+     */
+    public function next($next, array $options = [])
+    {
+        $currentLimit = $this->_View->get('currentLimit');
+        if (empty($options['url']['limit'])) {
+            $options['url']['limit'] = $currentLimit;
+        }
+
+        return parent::next($next, $options);
+    }
+    
+    /**
+     * numbers follow the settings for limit.
+     *
+     * @param string $first
+     * @param array $options
+     *
+     * @return string URL created by parent
+     */
+    public function first($first, array $options = [])
+    {
+        $currentLimit = $this->_View->get('currentLimit');
+        if (empty($options['url']['limit'])) {
+            $options['url']['limit'] = $currentLimit;
+        }
+
+        return parent::first($first, $options);
+    }
+    
+    /**
+     * numbers follow the settings for limit.
+     *
+     * @param string $last
+     * @param array $options
+     *
+     * @return string URL created by parent
+     */
+    public function last($last, array $options = [])
+    {
+        $currentLimit = $this->_View->get('currentLimit');
+        if (empty($options['url']['limit'])) {
+            $options['url']['limit'] = $currentLimit;
+        }
+
+        return parent::last($last, $options);
+    }
 }
