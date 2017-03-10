@@ -53,6 +53,7 @@ class FlexpaginatorHelper extends PaginatorHelper
                 continue;
             }
             $url = $flexUrl.$conjunction.'limit='.$candidates;
+            $url = h($flexUrl.$conjunction.'limit='.$candidates);
 
             $href = preg_replace('/{{url}}/', $url, $this->flexPagerTemplate);
             $href = preg_replace('/{{content}}/', $candidates, $href);
