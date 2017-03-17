@@ -3,6 +3,7 @@
 namespace Flexpager\View\Helper;
 
 use Cake\View\Helper\PaginatorHelper;
+use Cake\Routing\Router;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -18,6 +19,8 @@ use Cake\View\Helper\PaginatorHelper;
 class FlexpaginatorHelper extends PaginatorHelper
 {
     protected $flexPagerTemplate = '<a href={{url}}>{{content}}</a>';
+    protected $flexActivePagerTemplate = '<a href="#" class="active">{{content}}</a>';
+    protected $flexPagerFooter = '';
 
     public function limitCandidate()
     {
@@ -45,20 +48,20 @@ class FlexpaginatorHelper extends PaginatorHelper
         $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
 
-        $conjunction = strpos($flexUrl, '?') ? '&' : '?';
-
         $result = '';
         foreach ($listCandidates as $candidates) {
             if ($candidates == $currentLimit) {
-                continue;
+                $result .= preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $this->flexActivePagerTemplate);
+            } else {
+                // limit情報をセット
+                $flexUrl['limit'] = $candidates;
+                $url = Router::url($flexUrl);
+
+                $href = preg_replace('/{{url}}/', $url, $this->flexPagerTemplate);
+                $href = preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $href);
+
+                $result .= $href;
             }
-            $url = $flexUrl.$conjunction.'limit='.$candidates;
-            $url = h($flexUrl.$conjunction.'limit='.$candidates);
-
-            $href = preg_replace('/{{url}}/', $url, $this->flexPagerTemplate);
-            $href = preg_replace('/{{content}}/', $candidates, $href);
-
-            $result .= $href;
         }
 
         return $result;
@@ -77,6 +80,27 @@ class FlexpaginatorHelper extends PaginatorHelper
             throw new \Exception('"{{content}}" is not included.');
         }
         $this->flexPagerTemplate = $string;
+    }
+
+    /**
+     * setActiveFlexPagerTemplate modify the original template
+     * @param [string] $string must include "{{url}}" and "{{content}}".
+     */
+    public function setActiveFlexPagerTemplate($string)
+    {
+        if (!strpos($string, '{{content}}')) {
+            throw new \Exception('"{{content}}" is not included.');
+        }
+        $this->flexActivePagerTemplate = $string;
+    }
+
+    /**
+     * setFlexPagerFooter modify the original template
+     * @param [string] $string must include "{{url}}" and "{{content}}".
+     */
+    public function setFlexPagerFooter($string)
+    {
+        $this->flexPagerFooter = $string;
     }
 
     /**
