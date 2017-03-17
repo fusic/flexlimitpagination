@@ -3,6 +3,7 @@
 namespace Flexpager\Controller\Component;
 
 use Cake\Controller\Component\PaginatorComponent;
+use Cake\Datasource\QueryInterface;
 use Cake\Routing\Router;
 
 class FlexpagerComponent extends PaginatorComponent
@@ -41,7 +42,7 @@ class FlexpagerComponent extends PaginatorComponent
         }
 
         // create url.
-        $urlLinkForFlexPaginator = $this->urlForHelper();
+        $urlLinkForFlexPaginator = $this->urlForHelper($object, $this->_defaultConfig);
         $this->controller->set('flexUrl', $urlLinkForFlexPaginator);
 
         if (!empty($this->_listCandidates)) {
@@ -76,8 +77,16 @@ class FlexpagerComponent extends PaginatorComponent
      *
      * @return [array] Url
      */
-    private function urlForHelper()
+    private function urlForHelper($object, $settings)
     {
+        // limit取得用にparentのpaginateメソッドからコピペ
+        if ($object instanceof QueryInterface) {
+            $query = $object;
+            $object = $query->repository();
+        }
+
+        $alias = $object->alias();
+        $options = $this->mergeOptions($alias, $settings);
         // requestからURL情報を取得
         $urlArray = $this->controller->request->params;
         // pass情報をURLにセットする形に修正
@@ -96,7 +105,7 @@ class FlexpagerComponent extends PaginatorComponent
             $this->controller->set('currentLimit', $urlArray['limit']);
             unset($urlArray['limit']);
         } else {
-            $this->controller->set('currentLimit', $this->_config['limit']);
+            $this->controller->set('currentLimit', $options['limit']);
         }
         return $urlArray;
     }
