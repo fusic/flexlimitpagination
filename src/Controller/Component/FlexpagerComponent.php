@@ -91,6 +91,13 @@ class FlexpagerComponent extends PaginatorComponent
         unset($urlArray['pass']);
         // page情報は引き継がない
         unset($urlArray['page']);
+        // limit情報をセットする
+        if (!empty($urlArray['limit'])) {
+            $this->controller->set('currentLimit', $urlArray['limit']);
+            unset($urlArray['limit']);
+        } else {
+            $this->controller->set('currentLimit', $this->_config['limit']);
+        }
         return $urlArray;
     }
 }

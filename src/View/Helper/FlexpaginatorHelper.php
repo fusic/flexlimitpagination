@@ -21,7 +21,6 @@ class FlexpaginatorHelper extends PaginatorHelper
     protected $flexPagerTemplate = '<a href={{url}}>{{content}}</a>';
     protected $flexActivePagerTemplate = '<a href="#" class="active">{{content}}</a>';
     protected $flexPagerFooter = '';
-    protected $defaultPagerLimit = 20;
 
     public function limitCandidate()
     {
@@ -48,9 +47,6 @@ class FlexpaginatorHelper extends PaginatorHelper
         // current Url Except For limit.
         $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
-        if (empty($currentLimit)) {
-            $currentLimit = $this->defaultPagerLimit;
-        }
 
         $result = '';
         foreach ($listCandidates as $candidates) {
@@ -106,16 +102,6 @@ class FlexpaginatorHelper extends PaginatorHelper
     {
         $this->flexPagerFooter = $string;
     }
-
-    /**
-     * setFlexPagerFooter modify the original template
-     * @param [string] $string must include "{{url}}" and "{{content}}".
-     */
-    public function setDefaultPagerLimit($string)
-    {
-        $this->defaultPagerLimit = $string;
-    }
-
 
     /**
      * numbers follow the settings for limit.
