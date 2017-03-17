@@ -74,51 +74,23 @@ class FlexpagerComponent extends PaginatorComponent
     /**
      * urlForHelper create Urls For Helper.
      *
-     * @return [string] Url
+     * @return [array] Url
      */
     private function urlForHelper()
     {
-        $url = Router::url(null, true);
-
-        $query = $this->request->query;
-
-        if (!empty($query['limit'])) {
-            $this->controller->set('currentLimit', $query['limit']);
-            unset($query['limit']);
-        }
-
-        if (!empty($query['page'])) {
-            unset($query['page']);
-        }
-
-        $isFirstIterate = false;
-        foreach ($query as $key => $value) {
-            if (!$isFirstIterate) {
-                if (is_array($value)) {
-                    foreach ($value as $key => $value) {
-                        if (!$isFirstIterate) {
-                            $url .= '?'.$value.'='.$key.'.'.$value;
-                            $isFirstIterate = true;
-                        } else {
-                            $url .= '&'.$value.'='.$key.'.'.$value;
-                        }
-                    }
-                } else {
-                    $url .= '?'.$key.'='.$value;
-                    $isFirstIterate = true;
-                }
-            } else {
-                if (is_array($value)) {
-                    foreach ($value as $key => $value) {
-                        $url .= '&'.$value.'='.$key.'.'.$value;
-                    }
-                } else {
-                    $url .= '&'.$key.'='.$value;
-                }
-            }
-        }
-
-
-        return $url;
+        // requestからURL情報を取得
+        $urlArray = $this->controller->request->params;
+        // pass情報をURLにセットする形に修正
+        $urlArray = array_merge($urlArray, $urlArray['pass']);
+        // query情報をセット
+        $urlArray = array_merge($urlArray, $this->request->query);
+        // 不要な情報をunset
+        unset($urlArray['_matchedRoute']);
+        unset($urlArray['_ext']);
+        unset($urlArray['isAjax']);
+        unset($urlArray['pass']);
+        // page情報は引き継がない
+        unset($urlArray['page']);
+        return $urlArray;
     }
 }

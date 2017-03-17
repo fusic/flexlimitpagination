@@ -3,6 +3,7 @@
 namespace Flexpager\View\Helper;
 
 use Cake\View\Helper\PaginatorHelper;
+use Cake\Routing\Router;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -51,14 +52,14 @@ class FlexpaginatorHelper extends PaginatorHelper
             $currentLimit = $this->defaultPagerLimit;
         }
 
-        $conjunction = strpos($flexUrl, '?') ? '&' : '?';
-
         $result = '';
         foreach ($listCandidates as $candidates) {
             if ($candidates == $currentLimit) {
                 $result .= preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $this->flexActivePagerTemplate);
             } else {
-                $url = $flexUrl.$conjunction.'limit='.$candidates;
+                // limit情報をセット
+                $flexUrl['limit'] = $candidates;
+                $url = Router::url($flexUrl);
 
                 $href = preg_replace('/{{url}}/', $url, $this->flexPagerTemplate);
                 $href = preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $href);
