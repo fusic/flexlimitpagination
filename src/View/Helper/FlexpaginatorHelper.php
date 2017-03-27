@@ -22,6 +22,71 @@ class FlexpaginatorHelper extends PaginatorHelper
     protected $flexActivePagerTemplate = '<a href="#" class="active">{{content}}</a>';
     protected $flexPagerFooter = '';
 
+    // copied parent method and added two lines, due to the scalability was not enough.
+    public function sort($key, $title = null, array $options = [])
+    {
+        $options += ['url' => [], 'model' => null, 'escape' => true];
+        $url = $options['url'];
+        unset($options['url']);
+
+        $currentLimit = $this->_View->get('currentLimit');
+        $url['limit'] = $currentLimit;
+
+        if (empty($title)) {
+            $title = $key;
+
+            if (strpos($title, '.') !== false) {
+                $title = str_replace('.', ' ', $title);
+            }
+
+            $title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
+        }
+        $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
+        unset($options['direction']);
+
+        $locked = isset($options['lock']) ? $options['lock'] : false;
+        unset($options['lock']);
+
+        $sortKey = $this->sortKey($options['model']);
+        $defaultModel = $this->defaultModel();
+        $model = $options['model'] ?: $defaultModel;
+        list($table, $field) = explode('.', $key.'.');
+        if (!$field) {
+            $field = $table;
+            $table = $model;
+        }
+        $isSorted = (
+            $sortKey === $table.'.'.$field ||
+            $sortKey === $defaultModel.'.'.$key ||
+            $table.'.'.$field === $defaultModel.'.'.$sortKey
+        );
+
+        $template = 'sort';
+        $dir = $defaultDir;
+        if ($isSorted) {
+            if ($locked) {
+                $template = $dir === 'asc' ? 'sortDescLocked' : 'sortAscLocked';
+            } else {
+                $dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
+                $template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
+            }
+        }
+        if (is_array($title) && array_key_exists($dir, $title)) {
+            $title = $title[$dir];
+        }
+
+        $url = array_merge(
+            ['sort' => $key, 'direction' => $dir],
+            $url,
+            ['order' => null]
+        );
+        $vars = [
+            'text' => $options['escape'] ? h($title) : $title,
+            'url' => $this->generateUrl($url, $options['model']),
+        ];
+
+        return $this->templater()->format($template, $vars);
+    }
     public function limitCandidate()
     {
         if (empty($this->_View->get('listCandidates'))) {
