@@ -116,14 +116,14 @@ class FlexpaginatorHelper extends PaginatorHelper
         $result = '';
         foreach ($listCandidates as $candidates) {
             if ($candidates == $currentLimit) {
-                $result .= preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $this->flexActivePagerTemplate);
+                $result .= preg_replace('/{{content}}/', $candidates.$this->flexPagerFooter, $this->flexActivePagerTemplate);
             } else {
                 // limit情報をセット
                 $flexUrl['limit'] = $candidates;
                 $url = Router::url($flexUrl);
 
                 $href = preg_replace('/{{url}}/', $url, $this->flexPagerTemplate);
-                $href = preg_replace('/{{content}}/', $candidates . $this->flexPagerFooter, $href);
+                $href = preg_replace('/{{content}}/', $candidates.$this->flexPagerFooter, $href);
 
                 $result .= $href;
             }
@@ -133,8 +133,9 @@ class FlexpaginatorHelper extends PaginatorHelper
     }
 
     /**
-     * setFlexPagerTemplate modify the original template
-     * @param [string] $string must include "{{url}}" and "{{content}}".
+     * setFlexPagerTemplate modify the original template.
+     *
+     * @param [string] $string must include "{{url}}" and "{{content}}"
      */
     public function setFlexPagerTemplate($string)
     {
@@ -148,8 +149,9 @@ class FlexpaginatorHelper extends PaginatorHelper
     }
 
     /**
-     * setActiveFlexPagerTemplate modify the original template
-     * @param [string] $string must include "{{url}}" and "{{content}}".
+     * setActiveFlexPagerTemplate modify the original template.
+     *
+     * @param [string] $string must include "{{url}}" and "{{content}}"
      */
     public function setActiveFlexPagerTemplate($string)
     {
@@ -160,8 +162,9 @@ class FlexpaginatorHelper extends PaginatorHelper
     }
 
     /**
-     * setFlexPagerFooter modify the original template
-     * @param [string] $string must include "{{url}}" and "{{content}}".
+     * setFlexPagerFooter modify the original template.
+     *
+     * @param [string] $string must include "{{url}}" and "{{content}}"
      */
     public function setFlexPagerFooter($string)
     {
@@ -177,43 +180,64 @@ class FlexpaginatorHelper extends PaginatorHelper
      */
     public function numbers(array $options = [])
     {
+        $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
         if (empty($options['url']['limit'])) {
             $options['url']['limit'] = $currentLimit;
         }
+        if (!empty($flexUrl['sort'])) {
+            $options['url']['sort'] = $flexUrl['sort'];
+        }
+        if (!empty($flexUrl['direction'])) {
+            $options['url']['direction'] = $flexUrl['direction'];
+        }
 
         return parent::numbers($options);
     }
-        /**
+    /**
      * prev follow the settings for limit.
      *
      * @param string $prev
-     * @param array $options
+     * @param array  $options
      *
      * @return string URL created by parent
      */
     public function prev($title = '<< Previous', array $options = [])
     {
+        $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
         if (empty($options['url']['limit'])) {
             $options['url']['limit'] = $currentLimit;
         }
+        if (!empty($flexUrl['sort'])) {
+            $options['url']['sort'] = $flexUrl['sort'];
+        }
+        if (!empty($flexUrl['direction'])) {
+            $options['url']['direction'] = $flexUrl['direction'];
+        }
 
         return parent::prev($title, $options);
     }
-        /**
+    /**
      * numbers follow the settings for limit.
      *
      * @param string $next
-     * @param array $options
+     * @param array  $options
      *
      * @return string URL created by parent
      */
     public function next($title = 'Next >>', array $options = [])
     {
+        $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
         if (empty($options['url']['limit'])) {
             $options['url']['limit'] = $currentLimit;
+        }
+        if (!empty($flexUrl['sort'])) {
+            $options['url']['sort'] = $flexUrl['sort'];
+        }
+        if (!empty($flexUrl['direction'])) {
+            $options['url']['direction'] = $flexUrl['direction'];
         }
 
         return parent::next($title, $options);
@@ -223,21 +247,28 @@ class FlexpaginatorHelper extends PaginatorHelper
      * numbers follow the settings for limit.
      *
      * @param string $first
-     * @param array $options
+     * @param array  $options
      *
      * @return string URL created by parent
      */
     public function first($first = '<< first', array $options = [])
     {
+        $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
         if (empty($options['url']['limit'])) {
             $limit = $currentLimit;
+        }
+        if (!empty($flexUrl['sort'])) {
+            $options['url']['sort'] = $flexUrl['sort'];
+        }
+        if (!empty($flexUrl['direction'])) {
+            $options['url']['direction'] = $flexUrl['direction'];
         }
 
         $options += [
             'url' => [],
             'model' => $this->defaultModel(),
-            'escape' => true
+            'escape' => true,
         ];
 
         $params = $this->params($options['model']);
@@ -248,19 +279,18 @@ class FlexpaginatorHelper extends PaginatorHelper
 
         $out = '';
         if (is_int($first) && $params['page'] >= $first) {
-            dump($first);
-            for ($i = 1; $i <= $first; $i++) {
+            for ($i = 1; $i <= $first; ++$i) {
                 $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
                     'url' => $this->generateUrl($url, $options['model']),
-                    'text' => $i
+                    'text' => $i,
                 ]);
             }
         } elseif ($params['page'] > 1 && is_string($first)) {
             $first = $options['escape'] ? h($first) : $first;
             $out .= $this->templater()->format('first', [
                 'url' => $this->generateUrl(['page' => 1, 'limit' => $limit], $options['model']),
-                'text' => $first
+                'text' => $first,
             ]);
         }
 
@@ -271,21 +301,32 @@ class FlexpaginatorHelper extends PaginatorHelper
      * numbers follow the settings for limit.
      *
      * @param string $last
-     * @param array $options
+     * @param array  $options
      *
      * @return string URL created by parent
      */
     public function last($last = 'last >>', array $options = [])
     {
+        $flexUrl = $this->_View->get('flexUrl');
         $currentLimit = $this->_View->get('currentLimit');
         if (empty($options['url']['limit'])) {
             $limit = $currentLimit;
+        }
+        if (!empty($flexUrl['sort'])) {
+            $sort = $flexUrl['sort'];
+        } else {
+            $sort = null;
+        }
+        if (!empty($flexUrl['direction'])) {
+            $direction = $flexUrl['direction'];
+        } else {
+            $direction = null;
         }
 
         $options += [
             'model' => $this->defaultModel(),
             'escape' => true,
-            'url' => []
+            'url' => [],
         ];
         $params = $this->params($options['model']);
 
@@ -294,21 +335,21 @@ class FlexpaginatorHelper extends PaginatorHelper
         }
 
         $out = '';
-        $lower = (int)$params['pageCount'] - (int)$last + 1;
+        $lower = (int) $params['pageCount'] - (int) $last + 1;
 
         if (is_int($last) && $params['page'] <= $lower) {
-            for ($i = $lower; $i <= $params['pageCount']; $i++) {
+            for ($i = $lower; $i <= $params['pageCount']; ++$i) {
                 $url = array_merge($options['url'], ['page' => $i]);
                 $out .= $this->templater()->format('number', [
                     'url' => $this->generateUrl($url, $options['model']),
-                    'text' => $i
+                    'text' => $i,
                 ]);
             }
         } elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
             $last = $options['escape'] ? h($last) : $last;
             $out .= $this->templater()->format('last', [
-                'url' => $this->generateUrl(['page' => $params['pageCount'], 'limit' => $limit], $options['model']),
-                'text' => $last
+                'url' => $this->generateUrl(['page' => $params['pageCount'], 'limit' => $limit, 'sort' => $sort, 'direction' => $direction], $options['model']),
+                'text' => $last,
             ]);
         }
 
