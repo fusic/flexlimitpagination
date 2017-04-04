@@ -4,6 +4,8 @@ namespace Flexpager\View\Helper;
 
 use Cake\View\Helper\PaginatorHelper;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
+
 
 /**
  * Pagination Helper class for easy generation of pagination links.
