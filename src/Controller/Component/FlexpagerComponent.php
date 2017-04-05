@@ -5,6 +5,7 @@ namespace Flexpager\Controller\Component;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Datasource\QueryInterface;
 use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 
 class FlexpagerComponent extends PaginatorComponent
 {
